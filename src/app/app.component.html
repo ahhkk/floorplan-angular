@@ -1,0 +1,263 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row>
+    <!-- <button mat-icon-button (click)="drawer.toggle()"><mat-icon>menu</mat-icon></button> -->
+    <h1>Room Layout</h1>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<mat-drawer-container hasBackdrop="false">
+  <mat-drawer #drawer mode="side" opened>
+    <mat-accordion class="rl-object-options">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Rooms
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-list>
+          <mat-divider></mat-divider>
+          <ng-container *ngFor="let room of furnishings.rooms">
+            <mat-list-item (click)="insert(room, 'ROOM')">
+              {{room.title}}
+            </mat-list-item>
+            <mat-divider></mat-divider>
+          </ng-container>
+        </mat-list>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Doors
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <div class="preview-layout">
+          <div class="preview-item" *ngFor="let door of furnishings.doors">
+            <div (click)="insert(door, 'DOOR')">
+              <app-preview-furniture [type]="'DOOR'" [furniture]="door"></app-preview-furniture>
+              <div class="preview-title">{{door.title}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Windows
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <div class="preview-layout">
+          <div class="preview-item" *ngFor="let window of furnishings.windows">
+            <div (click)="insert(window, 'WINDOW')">
+              <app-preview-furniture [type]="'WINDOW'" [furniture]="window"></app-preview-furniture>
+              <div class="preview-title">{{window.title}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Tables
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <mat-form-field>
+          <mat-label>Default Chair</mat-label>
+          <mat-select [value]="defaultChairIndex" (valueChange)="defaultChairChanged($event)">
+            <mat-option *ngFor="let chair of furnishings.chairs; let i=index;" [value]="i">{{chair.title}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div class="preview-layout">
+          <div class="preview-item" *ngFor="let table of furnishings.tables">
+            <div (click)="insert(table, 'TABLE')">
+              <app-preview-furniture [type]="'TABLE'" [furniture]="table"></app-preview-furniture>
+              <div class="preview-title">{{table.title}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Chairs
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <div class="preview-layout">
+          <div class="preview-item" *ngFor="let chair of furnishings.chairs">
+            <div (click)="insert(chair, 'CHAIR')">
+              <app-preview-furniture [type]="'CHAIR'" [furniture]="chair"></app-preview-furniture>
+              <div class="preview-title">{{chair.title}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Miscellaneous
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <div class="preview-layout">
+          <div class="preview-item" *ngFor="let m of furnishings.miscellaneous">
+            <div (click)="insert(m, 'MISCELLANEOUS')">
+              <app-preview-furniture [type]="'MISCELLANEOUS'" [furniture]="m"></app-preview-furniture>
+              <div class="preview-title">{{m.title}}</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Text
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <form [formGroup]="textForm" class="new-text" (ngSubmit)="insertNewText()">
+          <mat-form-field>
+            <input matInput placeholder="Input text" formControlName="text">
+          </mat-form-field>
+          <mat-form-field>
+            <input matInput type="number" placeholder="Font Size" min="1" max="200" formControlName="font_size">
+          </mat-form-field>
+          <div style="margin: 1rem 0">
+            <mat-radio-group formControlName="direction">
+              <mat-radio-button value="HORIZONTAL">Horizontal</mat-radio-button>
+              <mat-radio-button value="VERTICAL">Vertical</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div style="margin: 2rem 12px">
+            <button mat-raised-button color="primary" type="submit">Add text</button>
+          </div>
+        </form>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Advanced
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <mat-divider></mat-divider>
+        <div style="padding: 2rem">
+          <button mat-raised-button color="primary" style="width: 100%" (click)="layoutChairs()">Layout chairs</button>
+        </div>
+      </mat-expansion-panel>
+
+      <div class="export-btns">
+        <button mat-raised-button color="primary" (click)="download('PNG')">Download as Image</button>
+        <button mat-raised-button color="primary" (click)="download('SVG')">Download as SVG</button>
+      </div>
+    </mat-accordion>
+  </mat-drawer>
+
+  <mat-drawer-content>
+    <mat-toolbar>
+      <mat-toolbar-row>
+        <div *ngIf="init">
+          <ng-container *ngIf="!app.roomEdit">
+            <button mat-icon-button matTooltip="Undo (Ctrl + Z)" (click)="app.undo()"
+              [disabled]="app.states.length === 1">
+              <fa-icon [icon]="['fas', 'reply']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Redo (Ctrl + Shift + Z)" (click)="app.redo()"
+              [disabled]="app.redoStates.length === 0">
+              <fa-icon [icon]="['fas', 'share']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Clone (Ctrl + D)" [disabled]="app.selections.length === 0"
+              (click)="app.clone()">
+              <fa-icon [icon]="['fas', 'clone']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Delete (Delete)" [disabled]="app.selections.length === 0"
+              (click)="app.delete()">
+              <fa-icon [icon]="['fas', 'trash']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Rotate Anti-Clockwise (Ctrl + Left Arrow)"
+              [disabled]="app.selections.length === 0" (click)="app.rotateAntiClockWise()">
+              <fa-icon [icon]="['fas', 'undo']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Rotate Clockwise (Ctrl + Right Arrow)"
+              [disabled]="app.selections.length === 0" (click)="app.rotateClockWise()">
+              <fa-icon [icon]="['fas', 'redo']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Group (Ctrl + G)" [disabled]="app.selections.length < 2"
+              (click)="app.group()">
+              <fa-icon [icon]="['fas', 'object-group']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Ungroup (Ctrl + E)" [disabled]="!app.ungroupable"
+              (click)="app.ungroup()">
+              <fa-icon [icon]="['fas', 'object-ungroup']"></fa-icon>
+            </button>
+            <button mat-button matTooltip="Arrange" [matMenuTriggerFor]="arrange">Arrange</button>
+            <button mat-raised-button matTooltip="Switch Edition Mode" color="primary" (click)="app.editRoom()">Edit
+              Room</button>
+          </ng-container>
+          <ng-container *ngIf="app.roomEdit">
+            <button mat-icon-button matTooltip="Undo (Ctrl + Z)" (click)="app.undo()"
+              [disabled]="app.roomEditStates.length === 1">
+              <fa-icon [icon]="['fas', 'reply']"></fa-icon>
+            </button>
+            <button mat-icon-button matTooltip="Redo (Ctrl + Shift + Z)" (click)="app.redo()"
+              [disabled]="app.roomEditRedoStates.length === 0">
+              <fa-icon [icon]="['fas', 'share']"></fa-icon>
+            </button>
+            <button mat-button matTooltip="Switch Edition Mode" color="primary" *ngIf="app.roomEdit"
+              (click)="app.endEditRoom()">End Room Edition</button>
+          </ng-container>
+        </div>
+        <mat-menu #arrange="matMenu">
+          <ng-template matMenuContent>
+            <button mat-menu-item (click)="app.arrange('LEFT')" [disabled]="app.selections.length < 2">Arrange Left</button>
+            <button mat-menu-item (click)="app.arrange('CENTER')" [disabled]="app.selections.length < 2">Arrange Center</button>
+            <button mat-menu-item (click)="app.arrange('RIGHT')" [disabled]="app.selections.length < 2">Arrange Right</button>
+            <button mat-menu-item (click)="app.arrange('TOP')" [disabled]="app.selections.length < 2">Arrange Top</button>
+            <button mat-menu-item (click)="app.arrange('MIDDLE')" [disabled]="app.selections.length < 2">Arrange Middle</button>
+            <button mat-menu-item (click)="app.arrange('BOTTOM')" [disabled]="app.selections.length < 2">Arrange Bottom</button>
+            <button mat-menu-item (click)="app.placeInCenter('HORIZONTAL')">Center Horizontally</button>
+            <button mat-menu-item (click)="app.placeInCenter('VERTICAL')">Center Vertically</button>
+          </ng-template>
+        </mat-menu>
+        <app-zoom (zoomChange)="onZoom($event)" [zoom]="app.zoom"></app-zoom>
+      </mat-toolbar-row>
+    </mat-toolbar>
+    <app-view></app-view>
+    <table class="status-bar">
+      <tbody>
+        <tr class="status-bar-item">
+          <td>Type</td>
+          <td>Name</td>
+          <td>Left</td>
+          <td>Top</td>
+          <td>Rotation</td>
+          <td>Width</td>
+          <td>Height</td>
+          <td></td>
+        </tr>
+        <tr class="status-bar-item" *ngFor="let selected of app.selections">
+          <td><strong *ngIf="selected.name">{{selected.name.split(':')[0] | titlecase}}</strong></td>
+          <td><strong *ngIf="selected.name">{{selected.name.split(':')[1]}}</strong></td>
+          <td><strong>{{selected.left}}</strong></td>
+          <td><strong>{{selected.top}}</strong></td>
+          <td><strong>{{selected.angle}}'</strong></td>
+          <td><strong>{{selected.width}}</strong></td>
+          <td><strong>{{selected.height}}</strong></td>
+          <td>
+            <strong *ngIf="selected.name.split(':')[0] == 'TABLE'">
+              {{selected._objects.length - 1}} Chairs
+            </strong>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </mat-drawer-content>
+</mat-drawer-container>
