@@ -3,4 +3,4 @@
 - Built with Fabric.js
 - Angular 8
 
- [**DEMO**](https://senidev-floorplan.vercel.app)
+ [**DEMO**](https://floorplan-angular.vercel.app/)
